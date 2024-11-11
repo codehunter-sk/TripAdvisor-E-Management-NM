@@ -1,0 +1,58 @@
+@isTest
+public class FoodOptionTriggerTest {
+
+    @isTest static void testInsertFoodOption() {
+        // Step 1: Create a sample Hotel record
+        Hotel__c hotel = new Hotel__c(Name = 'Sample Hotel');
+        insert hotel;
+
+        // Debug to verify Hotel creation
+        System.debug('Hotel inserted with ID: ' + hotel.Id);
+
+        // Step 2: Insert a Food Option related to the hotel
+        Food_Option__c foodOption = new Food_Option__c(
+            Hotel__c = hotel.Id,
+            Food_Amount__c = 50 // Ensure required fields are filled
+        );
+
+        try {
+            insert foodOption;
+            System.debug('Food Option inserted successfully with ID: ' + foodOption.Id);
+        } catch (DmlException e) {
+            System.debug('DML exception on insert: ' + e.getMessage());
+        }
+
+        // Fetch the Hotel again to observe any changes in TotalFoodOptions__c
+        Hotel__c updatedHotel = [SELECT TotalFoodOptions__c FROM Hotel__c WHERE Id = :hotel.Id];
+        System.debug('After insert, TotalFoodOptions__c: ' + updatedHotel.TotalFoodOptions__c);
+    }
+
+    @isTest static void testDeleteFoodOption() {
+        // Step 1: Create Hotel record
+        Hotel__c hotel = new Hotel__c(Name = 'Sample Hotel', TotalFoodOptions__c = 1);
+        insert hotel;
+
+        // Debug to verify Hotel creation
+        System.debug('Hotel inserted with ID: ' + hotel.Id);
+
+        // Step 2: Insert a Food Option
+        Food_Option__c foodOption = new Food_Option__c(
+            Hotel__c = hotel.Id,
+            Food_Amount__c = 50
+        );
+        insert foodOption;
+        System.debug('Food Option inserted with ID: ' + foodOption.Id);
+
+        // Step 3: Delete Food Option
+        try {
+            delete foodOption;
+            System.debug('Food Option deleted successfully');
+        } catch (DmlException e) {
+            System.debug('DML exception on delete: ' + e.getMessage());
+        }
+
+        // Fetch the Hotel again to observe changes in TotalFoodOptions__c
+        Hotel__c updatedHotel = [SELECT TotalFoodOptions__c FROM Hotel__c WHERE Id = :hotel.Id];
+        System.debug('After delete, TotalFoodOptions__c: ' + updatedHotel.TotalFoodOptions__c);
+    }
+}
