@@ -1,0 +1,30 @@
+public class FoodOptionTriggerHandler {
+    public static void updateHotelInformation(List<Food_Option__c> foodOptions, String operation) {
+        if (operation == 'INSERT') {
+            for (Food_Option__c foodOption : foodOptions) {
+                // Logic to update hotel information for new food options
+                // Example: update the corresponding Hotel record
+                Hotel__c hotel = [SELECT Id, TotalFoodOptions__c FROM Hotel__c WHERE Id = :foodOption.Hotel__c LIMIT 1];
+                hotel.TotalFoodOptions__c += 1; // Increment total food options
+                update hotel; // Don't forget to add error handling for update
+            }
+        } 
+        else if (operation == 'UPDATE') {
+            for (Integer i = 0; i < foodOptions.size(); i++) {
+                Food_Option__c newFoodOption = foodOptions[i];
+                // Implement update logic, for example:
+                // Check if the hotel has changed
+                // You may need to fetch the old values if necessary
+            }
+        } 
+        else if (operation == 'DELETE') {
+            for (Food_Option__c foodOption : foodOptions) {
+                // Logic to update hotel information after a food option is deleted
+                // Example: update the corresponding Hotel record
+                Hotel__c hotel = [SELECT Id, TotalFoodOptions__c FROM Hotel__c WHERE Id = :foodOption.Hotel__c LIMIT 1];
+                hotel.TotalFoodOptions__c -= 1; // Decrement total food options
+                update hotel; // Don't forget to add error handling for update
+            }
+        }
+    }
+}
